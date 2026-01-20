@@ -12,6 +12,9 @@ readonly class DriverDistanceService
 {
 	public function __construct(private DistanceCalculatorInterface $distanceCalculator) {}
 
+	/**
+	 * @param Collection<int, Restaurant> $restaurants
+	 */
 	public function closestRestaurant(Driver $driver, Collection $restaurants): ?Restaurant
 	{
 		$closest = null;

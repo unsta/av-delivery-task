@@ -9,6 +9,7 @@ class GeoHelper
 	private const int KM_PER_DEGREE = 111;
 	private const int RANDOM_PRECISION = 1000;
 
+	/** @return array<int, mixed> */
 	public static function randomPointNear(float $lat, float $lng, float $maxKm = 5): array
 	{
 		$maxOffset = $maxKm / self::KM_PER_DEGREE;

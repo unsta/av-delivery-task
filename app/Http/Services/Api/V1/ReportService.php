@@ -8,7 +8,7 @@ use App\Http\Resources\Api\V1\ReportResource;
 use App\Models\{Driver, Restaurant};
 use Illuminate\Support\Collection;
 
-class ReportService
+readonly class ReportService
 {
 	public function __construct(
 		private DriverDistanceService $driverDistanceService
@@ -33,10 +33,16 @@ class ReportService
 		]);
 	}
 
+	/**
+	 * @param Collection<int, Restaurant> $restaurants
+	 * @param Collection<int, Driver> $drivers
+	 *
+	 * @return array<string, mixed>
+	 */
 	private function calculateSummary(Collection $restaurants, Collection $drivers): array
 	{
 		$totalDistance = $drivers->sum(fn($driver) => $driver->distanceToAssigned ?? 0);
-		$assignedDrivers = $drivers->filter(fn($driver) => $driver->nextRestaurant)->count();
+		$assignedDrivers = $drivers->whereNotNull('next_location')->count();
 		$totalOrders = $restaurants->sum('orders_count');
 		$totalCapacity = $drivers->sum('capacity');
 		$assignedCapacity = $drivers->filter(fn($d) => $d->next_location !== null)->sum('capacity');

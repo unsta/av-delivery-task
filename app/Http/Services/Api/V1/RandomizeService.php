@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class RandomizeService
 {
+	/** @return array<string, mixed> */
     public function randomize(): array
     {
         DB::beginTransaction();

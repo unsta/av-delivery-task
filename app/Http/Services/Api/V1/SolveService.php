@@ -14,6 +14,7 @@ readonly class SolveService
 		private DistanceCalculatorInterface $distanceCalculator
 	) {}
 
+	/** @return array<string, mixed> */
     public function solve(): array
     {
         $drivers = Driver::all();
@@ -37,6 +38,12 @@ readonly class SolveService
         ];
     }
 
+	/**
+	 * @param Collection<int, Driver> $drivers
+	 * @param Collection<int, Restaurant> $restaurants
+	 *
+	 * @return array<int, mixed>
+	 */
     private function calculateDistances(Collection $drivers, Collection $restaurants): array
     {
         $distances = [];
@@ -56,6 +63,13 @@ readonly class SolveService
         return $distances;
     }
 
+	/**
+	 * @param Collection<int, Driver> $drivers
+	 * @param Collection<int, Restaurant> $restaurants
+	 * @param array<int, mixed> $distances
+	 *
+	 * @return array<int, mixed>
+	 */
 	private function assignDriversToRestaurants(
 		Collection $drivers,
 		Collection $restaurants,
