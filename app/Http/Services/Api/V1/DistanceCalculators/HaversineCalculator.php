@@ -11,7 +11,7 @@ class HaversineCalculator implements DistanceCalculatorInterface
     public function distanceKm(float $lat1, float $lng1, float $lat2, float $lng2): float
     {
         $distanceLat = deg2rad($lat2 - $lat1);
-		$distanceLng = deg2rad($lng2 - $lng1);
+        $distanceLng = deg2rad($lng2 - $lng1);
 
         $a = sin($distanceLat / 2) * sin($distanceLat / 2) +
              cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *

@@ -15,9 +15,9 @@ class RandomizeController extends Controller
     ) {
     }
 
-	public function __invoke(): JsonResponse
-	{
-		$result = $this->randomizeService->randomize();
-		return response()->json($result);
-	}
+    public function __invoke(): JsonResponse
+    {
+        $result = $this->randomizeService->randomize();
+        return response()->json($result);
+    }
 }

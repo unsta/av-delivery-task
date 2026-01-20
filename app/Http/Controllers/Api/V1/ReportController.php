@@ -18,6 +18,6 @@ class ReportController extends Controller
 
     public function __invoke(): JsonResponse|ReportResource
     {
-		return $this->reportService->generateReport();
+        return $this->reportService->generateReport();
     }
 }

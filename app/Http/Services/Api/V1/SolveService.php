@@ -10,11 +10,12 @@ use Illuminate\Support\Collection;
 
 readonly class SolveService
 {
-	public function __construct(
-		private DistanceCalculatorInterface $distanceCalculator
-	) {}
+    public function __construct(
+        private DistanceCalculatorInterface $distanceCalculator
+    ) {
+    }
 
-	/** @return array<string, mixed> */
+    /** @return array<string, mixed> */
     public function solve(): array
     {
         $drivers = Driver::all();
@@ -38,12 +39,12 @@ readonly class SolveService
         ];
     }
 
-	/**
-	 * @param Collection<int, Driver> $drivers
-	 * @param Collection<int, Restaurant> $restaurants
-	 *
-	 * @return array<int, mixed>
-	 */
+    /**
+     * @param Collection<int, Driver> $drivers
+     * @param Collection<int, Restaurant> $restaurants
+     *
+     * @return array<int, mixed>
+     */
     private function calculateDistances(Collection $drivers, Collection $restaurants): array
     {
         $distances = [];
@@ -63,52 +64,52 @@ readonly class SolveService
         return $distances;
     }
 
-	/**
-	 * @param Collection<int, Driver> $drivers
-	 * @param Collection<int, Restaurant> $restaurants
-	 * @param array<int, mixed> $distances
-	 *
-	 * @return array<int, mixed>
-	 */
-	private function assignDriversToRestaurants(
-		Collection $drivers,
-		Collection $restaurants,
-		array $distances
-	): array {
-		$assignments = [];
-		$restaurantOrders = $restaurants->pluck('orders_count', 'id')->toArray();
-		$restaurantAssigned = array_fill_keys($restaurants->pluck('id')->toArray(), 0);
+    /**
+     * @param Collection<int, Driver> $drivers
+     * @param Collection<int, Restaurant> $restaurants
+     * @param array<int, mixed> $distances
+     *
+     * @return array<int, mixed>
+     */
+    private function assignDriversToRestaurants(
+        Collection $drivers,
+        Collection $restaurants,
+        array $distances
+    ): array {
+        $assignments = [];
+        $restaurantOrders = $restaurants->pluck('orders_count', 'id')->toArray();
+        $restaurantAssigned = array_fill_keys($restaurants->pluck('id')->toArray(), 0);
 
-		foreach ($drivers->sortByDesc('capacity') as $driver) {
-			$bestRestaurant = null;
-			$minDistance = INF;
+        foreach ($drivers->sortByDesc('capacity') as $driver) {
+            $bestRestaurant = null;
+            $minDistance = INF;
 
-			foreach ($restaurants as $restaurant) {
-				$remainingOrders = max(0, $restaurantOrders[$restaurant->id] - $restaurantAssigned[$restaurant->id]);
-				$distance = $distances[$driver->id][$restaurant->id];
+            foreach ($restaurants as $restaurant) {
+                $remainingOrders = max(0, $restaurantOrders[$restaurant->id] - $restaurantAssigned[$restaurant->id]);
+                $distance = $distances[$driver->id][$restaurant->id];
 
-				if ($remainingOrders > 0 && $distance < $minDistance) {
-					$minDistance = $distance;
-					$bestRestaurant = $restaurant;
-				}
-			}
+                if ($remainingOrders > 0 && $distance < $minDistance) {
+                    $minDistance = $distance;
+                    $bestRestaurant = $restaurant;
+                }
+            }
 
-			if ($bestRestaurant === null) {
-				foreach ($restaurants as $restaurant) {
-					$distance = $distances[$driver->id][$restaurant->id];
-					if ($distance < $minDistance) {
-						$minDistance = $distance;
-						$bestRestaurant = $restaurant;
-					}
-				}
-			}
+            if ($bestRestaurant === null) {
+                foreach ($restaurants as $restaurant) {
+                    $distance = $distances[$driver->id][$restaurant->id];
+                    if ($distance < $minDistance) {
+                        $minDistance = $distance;
+                        $bestRestaurant = $restaurant;
+                    }
+                }
+            }
 
-			if ($bestRestaurant) {
-				$assignments[$driver->id] = $bestRestaurant->id;
-				$restaurantAssigned[$bestRestaurant->id] += $driver->capacity;
-			}
-		}
+            if ($bestRestaurant) {
+                $assignments[$driver->id] = $bestRestaurant->id;
+                $restaurantAssigned[$bestRestaurant->id] += $driver->capacity;
+            }
+        }
 
-		return $assignments;
-	}
+        return $assignments;
+    }
 }

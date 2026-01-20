@@ -15,9 +15,9 @@ class SolveController extends Controller
     ) {
     }
 
-	public function __invoke(): JsonResponse
-	{
-		$result = $this->solveService->solve();
-		return response()->json($result);
-	}
+    public function __invoke(): JsonResponse
+    {
+        $result = $this->solveService->solve();
+        return response()->json($result);
+    }
 }

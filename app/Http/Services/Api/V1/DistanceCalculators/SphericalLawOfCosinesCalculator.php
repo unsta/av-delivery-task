@@ -14,9 +14,9 @@ class SphericalLawOfCosinesCalculator implements DistanceCalculatorInterface
         $lat2Rad = deg2rad($lat2);
         $distanceLng = deg2rad($lng2 - $lng1);
 
-		return acos(
-			sin($lat1Rad) * sin($lat2Rad) +
-			cos($lat1Rad) * cos($lat2Rad) * cos($distanceLng)
-		) * self::EARTH_RADIUS_KM;
+        return acos(
+            sin($lat1Rad) * sin($lat2Rad) +
+            cos($lat1Rad) * cos($lat2Rad) * cos($distanceLng)
+        ) * self::EARTH_RADIUS_KM;
     }
 }
