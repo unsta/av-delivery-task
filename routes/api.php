@@ -6,7 +6,9 @@ use App\Http\Controllers\Api\V1\SolveController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
-    Route::post('/randomize', RandomizeController::class);
-    Route::post('/solve', SolveController::class);
-    Route::get('/report', ReportController::class);
+    Route::middleware(['throttle:api'])->group(function () {
+        Route::post('/randomize', RandomizeController::class);
+        Route::post('/solve', SolveController::class);
+        Route::get('/report', ReportController::class);
+    });
 });
