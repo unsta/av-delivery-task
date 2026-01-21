@@ -18,4 +18,4 @@ phpstan:
 	./vendor/bin/phpstan analyse --memory-limit=1G
 
 test-feature:
-	./vendor/bin/phpunit --testsuite Feature
+	./vendor/bin/sail test --testsuite=Feature
