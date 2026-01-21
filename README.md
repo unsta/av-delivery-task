@@ -1,59 +1,185 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Delivery Task API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This is a Laravel API for managing restaurant delivery assignments. 
 
-## About Laravel
+## Requirements:
+- Postman (https://www.postman.com/downloads/)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Project Set Up:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Clone the project
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+    git clone git@github.com:unsta/av-delivery-task.git
 
-## Learning Laravel
+### Create an `.env` file from `.env.example`
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### From the project directory run
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+    composer install
 
-## Laravel Sponsors
+### To start the Docker containers in the background run
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+    ./vendor/bin/sail up -d
 
-### Premium Partners
+Note: Make sure that all the containers are started successfully and there are no port conflicts!
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### To generate an APP_KEY run
 
-## Contributing
+    ./vendor/bin/sail artisan key:generate
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Run the migrations
 
-## Code of Conduct
+    ./vendor/bin/sail artisan migrate
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Run the seeders
 
-## Security Vulnerabilities
+    ./vendor/bin/sail artisan db:seed
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Run code quality checks (Check the `app/Makefile`)
 
-## License
+    make pipeline
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Run the Feature tests (Docker provides a testing db)
+
+    make test-feature
+
+## API Endpoints (v1)
+
+All API endpoints are prefixed with `/api/v1/`
+
+### 1. Login
+**POST** `/api/v1/login`
+
+```bash
+curl --location --request POST 'http://localhost:8080/api/v1/login' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "email": "bob.bobber@va.com",
+    "password": "password123"
+}'
+```
+
+**Response:**
+```json
+{
+    "status": "success",
+    "message": "User logged in successfully",
+    "token": "6|ktMrrICuwuRy9X6GboHhFXshNsUIWmLgNkam65dJf2312de3"
+}
+```
+
+NOTE: The TOKEN is needed for the rest of the requests!
+
+### 2. Randomize
+**POST** `/api/v1/randomize`
+
+```bash
+curl --location --request POST 'http://localhost:8080/api/v1/randomize' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer 6|ktMrrICuwuRy9X6GboHhFXshNsUIWmLgNkam65dJf2312de3'
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Randomization completed successfully",
+  "drivers_count": 100,
+  "restaurants_count": 10
+}
+```
+
+### 3. Solve
+**POST** `/api/v1/solve`
+
+```bash
+curl --location --request POST 'http://localhost:8080/api/v1/solve' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer 6|ktMrrICuwuRy9X6GboHhFXshNsUIWmLgNkam65dJf2312de3'
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Assignment completed successfully",
+  "assignments_count": 100
+}
+```
+
+### 4. Report
+**GET** `/api/v1/report`
+
+```bash
+curl --location --request GET 'http://localhost:8080/api/v1/report' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer 6|ktMrrICuwuRy9X6GboHhFXshNsUIWmLgNkam65dJf2312de3'
+```
+
+**Response:**
+```json
+{
+  "restaurants": [
+    {
+      "id": 1,
+      "title": "Хепи Бъкстон",
+      "latitude": 42.667122,
+      "longitude": 23.281657,
+      "orders_count_before": 25,
+      "orders_count_after": 5,
+      "assigned_capacity": 20,
+      "assigned_drivers_count": 6
+    }
+  ],
+  "drivers": [
+    {
+      "id": 1,
+      "name": "Driver 1",
+      "latitude": 42.668,
+      "longitude": 23.282,
+      "capacity": 3,
+      "assigned_restaurant_id": 1,
+      "assigned_restaurant_title": "Хепи Бъкстон",
+      "distance_to_assigned_km": 2.45,
+      "closest_restaurant_id": 1,
+      "closest_restaurant_title": "Хепи Бъкстон",
+      "distance_to_closest_km": 2.45
+    }
+  ],
+  "summary": {
+    "total_drivers": 100,
+    "assigned_drivers": 100,
+    "total_restaurants": 10,
+    "total_orders": 275,
+    "total_capacity": 250,
+    "assigned_capacity": 250,
+    "remaining_orders": 25,
+    "average_distance_km": 3.45,
+    "total_distance_km": 345.0
+  }
+}
+
+
+```
+### 5. Logout
+**POST** `/api/v1/logout`
+
+```bash
+curl --location --request POST 'http://localhost:8080/api/v1/logout' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer 6|ktMrrICuwuRy9X6GboHhFXshNsUIWmLgNkam65dJf2312de3'
+```
+
+**Response:**
+```json
+{
+    "status": "success",
+    "message": "Logged out successfully"
+}
+```
+
+## Future Ideas/Improvements
+- `UI with map`
+- `Improved algorithm`
+- `Unit Tests`
