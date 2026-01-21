@@ -10,6 +10,8 @@ use Illuminate\Support\Collection;
 
 readonly class SolveService
 {
+    private const float WEIGHT_PER_ORDER = 0.1;
+
     public function __construct(
         private DistanceCalculatorInterface $distanceCalculator
     ) {
@@ -82,14 +84,16 @@ readonly class SolveService
 
         foreach ($drivers->sortByDesc('capacity') as $driver) {
             $bestRestaurant = null;
-            $minDistance = INF;
+            $bestScore = INF;
 
             foreach ($restaurants as $restaurant) {
                 $remainingOrders = max(0, $restaurantOrders[$restaurant->id] - $restaurantAssigned[$restaurant->id]);
                 $distance = $distances[$driver->id][$restaurant->id];
 
-                if ($remainingOrders > 0 && $distance < $minDistance) {
-                    $minDistance = $distance;
+                $score = $distance - $remainingOrders * self::WEIGHT_PER_ORDER;
+
+                if ($remainingOrders > 0 && $score < $bestScore) {
+                    $bestScore = $score;
                     $bestRestaurant = $restaurant;
                 }
             }
@@ -97,8 +101,8 @@ readonly class SolveService
             if ($bestRestaurant === null) {
                 foreach ($restaurants as $restaurant) {
                     $distance = $distances[$driver->id][$restaurant->id];
-                    if ($distance < $minDistance) {
-                        $minDistance = $distance;
+                    if ($distance < $bestScore) {
+                        $bestScore = $distance;
                         $bestRestaurant = $restaurant;
                     }
                 }
