@@ -13,6 +13,8 @@ This is a Laravel API for managing restaurant delivery assignments.
 
 ### Create an `.env` file from `.env.example`
 
+    cp .env.example .env
+
 ### From the project directory run
 
     composer install
@@ -29,7 +31,7 @@ Note: Make sure that all the containers are started successfully and there are n
 
 ### Run the migrations
 
-    ./vendor/bin/sail artisan migrate
+    ./vendor/bin/sail artisan migrate:fresh
 
 ### Run the seeders
 
